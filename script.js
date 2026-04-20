@@ -20,3 +20,11 @@ canvas.onmousemove = (e) => {
     ctx.stroke();
   }
 };
+
+const colorPicker = document.getElementById("colorPicker");
+const lineWidth = document.getElementById("lineWidth");
+
+// У функції, де відбувається малювання (там, де ctx.stroke()),
+// перед початком лінії додайте:
+ctx.strokeStyle = colorPicker.value;
+ctx.lineWidth = lineWidth.value;
