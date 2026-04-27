@@ -16,3 +16,54 @@ canvas {
   gap: 15px;
   justify-content: center;
 }
+
+.controls {
+  background: #34495e;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 18px; /* Розмір іконки */
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+/* Загальний стиль для всіх кнопок панелі — автор: ім'я /нік */
+.tool-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  border: 2px solid #ccc; /* Світла рамка за замовчуванням */
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Специфічні налаштування для вибору кольору, автор: ім'я учасника */
+#colorPicker {
+  appearance: none;
+  background: none;
+  border: 3px solid #000000; /* Жирніша рамка для кольору */
+}
+
+/* Прибираємо внутрішні рамки браузера для кольору — автор: ім'я учасника */
+#colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+#colorPicker::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
