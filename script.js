@@ -28,3 +28,17 @@ const lineWidth = document.getElementById("lineWidth");
 // перед початком лінії додайте:
 ctx.strokeStyle = colorPicker.value;
 ctx.lineWidth = lineWidth.value;
+
+//<!--TEORET1K-->
+
+// 1. Знаходимо кнопку в HTML
+const clearBtn = document.getElementById("clearBtn");
+
+// 2. Описуємо, що станеться при кліку
+clearBtn.onclick = () => {
+  // clearRect видаляє все у вказаному прямокутнику (від 0,0 до краю полотна)
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Додаткова перестраховка: скидаємо шлях, щоб наступна лінія не почалася зі старого місця
+  ctx.beginPath();
+};

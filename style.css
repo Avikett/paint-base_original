@@ -16,3 +16,15 @@ canvas {
   gap: 15px;
   justify-content: center;
 }
+<!--TEORET1K-- > button {
+  padding: 5px 10px;
+  font-size: 18px; /* Розмір іконки */
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
