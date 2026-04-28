@@ -16,7 +16,9 @@ canvas {
   gap: 15px;
   justify-content: center;
 }
-<!--TEORET1K-- > button {
+/*TEORET1K*/
+
+button {
   padding: 5px 10px;
   font-size: 18px; /* Розмір іконки */
   cursor: pointer;
