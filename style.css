@@ -39,7 +39,8 @@ button:hover {
   background-color: #e0e0e0;
 }
 /* Загальний стиль для всіх кнопок панелі — автор: ім'я /нік */
-.tool-button {
+.tool-button,
+select.tool-button {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -50,6 +51,7 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 16px; /* щоб іконки 🖌️ та 📏 було добре видно */
 }
 
 /* Специфічні налаштування для вибору кольору, автор: ім'я учасника */
