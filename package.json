@@ -1,6 +1,7 @@
 {
-  "name": "html-css",
+  "name": "paint-base-original",
   "version": "1.0.0",
+  "description": "UnityPaint v0.1",
   "scripts": {
     "start": "npx serve ."
   },
