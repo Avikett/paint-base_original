@@ -16,32 +16,34 @@ ctx.strokeStyle = "#e74c3c"; // Червоний колір за замовчу�
 // Логіка малювання
 canvas.onmousedown = (e) => {
   isDrawing = true;
-   // Запам'ятовуємо початкову точку (для обох інструментів)
+  // Запам'ятовуємо початкову точку (для обох інструментів)
   startX = e.offsetX;
   startY = e.offsetY;
 
   ctx.beginPath();
- 
+
   // Оновлюємо параметри з повзунків
   ctx.strokeStyle = document.getElementById("colorPicker").value;
   ctx.lineWidth = document.getElementById("lineWidth").value;
   if (tool.value === "brush") {
-	ctx.moveTo(startX, startY);
+    ctx.moveTo(startX, startY);
   }
 };
 canvas.onmousemove = (e) => {
   // Пензель малює постійно, поки ми рухаємо мишу
   if (isDrawing && tool.value === "brush") {
-	ctx.lineTo(e.offsetX, e.offsetY);
-	ctx.stroke();
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
   }
 };
 canvas.onmouseup = (e) => {
   // Лінія малюється один раз тільки в момент відпускання кнопки
   if (isDrawing && tool.value === "line") {
-	ctx.moveTo(startX, startY);
-	ctx.lineTo(e.offsetX, e.offsetY);
-	ctx.stroke();
+    ctx.moveTo(startX, startY);
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = lineWidth.value;
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
   }
   isDrawing = false;
 };
@@ -49,14 +51,6 @@ canvas.onmouseup = (e) => {
 lineWidth.oninput = () => {
   sizeValue.textContent = lineWidth.value + "px";
 };
-
-// 1. Знаходимо кнопку в HTML
-const clearBtn = document.getElementById("clearBtn");
-
-// У функції, де відбувається малювання (там, де ctx.stroke()),
-// перед початком лінії додайте:
-ctx.strokeStyle = colorPicker.value;
-ctx.lineWidth = lineWidth.value;
 
 //<!--TEORET1K-->
 
