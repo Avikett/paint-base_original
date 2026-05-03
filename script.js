@@ -65,14 +65,6 @@ lineWidth.oninput = () => {
   sizeValue.textContent = lineWidth.value + "px";
 };
 
-// 1. Знаходимо кнопку в HTML
-const clearBtn = document.getElementById("clearBtn");
-
-// У функції, де відбувається малювання (там, де ctx.stroke()),
-// перед початком лінії додайте:
-ctx.strokeStyle = colorPicker.value;
-ctx.lineWidth = lineWidth.value;
-
 //<!--TEORET1K-->
 
 // 1. Знаходимо кнопку в HTML
