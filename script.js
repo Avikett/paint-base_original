@@ -1,13 +1,28 @@
-// Нові змінні для Кроку 14
-const tool = document.getElementById("tool");
-let startX, startY;
-
 const canvas = document.querySelector("#board");
 const ctx = canvas.getContext("2d");
 let isDrawing = false;
 const colorPicker = document.getElementById("colorPicker");
 const lineWidth = document.getElementById("lineWidth");
 const sizeValue = document.getElementById("sizeValue");
+// Нові змінні для Кроку 14
+let currentTool = "brush"; // Поточний інструмент
+const brushBtn = document.getElementById("brushBtn");
+const lineBtn = document.getElementById("lineBtn");
+
+let startX, startY;
+// Обробка натискання на "Пензель"
+brushBtn.onclick = () => {
+  currentTool = "brush";
+  brushBtn.classList.add("active"); // Підсвічуємо
+  lineBtn.classList.remove("active"); // Гасимо іншу
+};
+
+// Обробка натискання на "Лінію"
+lineBtn.onclick = () => {
+  currentTool = "line";
+  lineBtn.classList.add("active");
+  brushBtn.classList.remove("active");
+};
 
 // Технічні параметри пензля
 ctx.lineWidth = 5;
@@ -25,23 +40,21 @@ canvas.onmousedown = (e) => {
   // Оновлюємо параметри з повзунків
   ctx.strokeStyle = document.getElementById("colorPicker").value;
   ctx.lineWidth = document.getElementById("lineWidth").value;
-  if (tool.value === "brush") {
+  if (currentTool === "brush") {
     ctx.moveTo(startX, startY);
   }
 };
 canvas.onmousemove = (e) => {
   // Пензель малює постійно, поки ми рухаємо мишу
-  if (isDrawing && tool.value === "brush") {
+  if (isDrawing && currentTool === "brush") {
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
   }
 };
 canvas.onmouseup = (e) => {
   // Лінія малюється один раз тільки в момент відпускання кнопки
-  if (isDrawing && tool.value === "line") {
+  if (isDrawing && currentTool === "line") {
     ctx.moveTo(startX, startY);
-    ctx.strokeStyle = colorPicker.value;
-    ctx.lineWidth = lineWidth.value;
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
   }
