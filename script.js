@@ -8,21 +8,30 @@ const sizeValue = document.getElementById("sizeValue");
 let currentTool = "brush"; // Поточний інструмент
 const brushBtn = document.getElementById("brushBtn");
 const lineBtn = document.getElementById("lineBtn");
+const rectBtn = document.getElementById("rectBtn");
+const circleBtn = document.getElementById("circleBtn");
+const tools = [brushBtn, lineBtn, rectBtn, circleBtn];
+
 let snapshot; // Тут буде зберігатись "фотографія" полотна
 
 let startX, startY;
 // Обробка натискання на "Пензель"
 brushBtn.onclick = () => {
   currentTool = "brush";
-  brushBtn.classList.add("active"); // Підсвічуємо
-  lineBtn.classList.remove("active"); // Гасимо іншу
+  // Універсальна функція перемикання (замість копіпасту для кожної кнопки)
+  function setActiveTool(toolName, activeBtn) {
+    currentTool = toolName;
+    tools.forEach((btn) => btn.classList.remove("active"));
+    activeBtn.classList.add("active");
+  }
 };
 
 // Обробка натискання на "Лінію"
 lineBtn.onclick = () => {
-  currentTool = "line";
-  lineBtn.classList.add("active");
-  brushBtn.classList.remove("active");
+  brushBtn.onclick = () => setActiveTool("brush", brushBtn);
+  lineBtn.onclick = () => setActiveTool("line", lineBtn);
+  rectBtn.onclick = () => setActiveTool("rect", rectBtn);
+  circleBtn.onclick = () => setActiveTool("circle", circleBtn);
 };
 
 // Технічні параметри пензля
@@ -50,19 +59,33 @@ canvas.onmousedown = (e) => {
   }
 };
 canvas.onmousemove = (e) => {
-  if (!isDrawing) return;
-  if (currentTool === "brush") {
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-  } else if (currentTool === "line") {
-    // ЕФЕКТ ГУМОВОЇ НИТКИ:
-    // 1. Повертаємо полотно до стану "до початку малювання лінії"
-    ctx.putImageData(snapshot, 0, 0);
-    // 2. Малюємо лінію заново в нову позицію миші
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
+  {
+    if (!isDrawing) return;
+
+    if (currentTool === "brush") {
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    } else {
+      // Для всіх геометричних фігур спочатку повертаємо чистий знімок
+      ctx.putImageData(snapshot, 0, 0);
+      ctx.beginPath();
+
+      if (currentTool === "line") {
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+      } else if (currentTool === "rect") {
+        // Прямокутник: (x, y, ширина, висота)
+        ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+      } else if (currentTool === "circle") {
+        // Малюємо коло, де центр — початкова точка, а радіус — відстань до миші
+        let radius = Math.sqrt(
+          Math.pow(e.offsetX - startX, 2) + Math.pow(e.offsetY - startY, 2)
+        );
+        ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+      }
+
+      ctx.stroke();
+    }
   }
 };
 
