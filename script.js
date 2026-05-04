@@ -8,6 +8,7 @@ const sizeValue = document.getElementById("sizeValue");
 let currentTool = "brush"; // Поточний інструмент
 const brushBtn = document.getElementById("brushBtn");
 const lineBtn = document.getElementById("lineBtn");
+let snapshot; // Тут буде зберігатись "фотографія" полотна
 
 let startX, startY;
 // Обробка натискання на "Пензель"
@@ -34,8 +35,12 @@ canvas.onmousedown = (e) => {
   // Запам'ятовуємо початкову точку (для обох інструментів)
   startX = e.offsetX;
   startY = e.offsetY;
-
   ctx.beginPath();
+  // Знімок: копіюємо все, що вже намальовано, у змінну
+  snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  if (currentTool === "brush") {
+    ctx.moveTo(startX, startY);
+  }
 
   // Оновлюємо параметри з повзунків
   ctx.strokeStyle = document.getElementById("colorPicker").value;
@@ -45,19 +50,23 @@ canvas.onmousedown = (e) => {
   }
 };
 canvas.onmousemove = (e) => {
-  // Пензель малює постійно, поки ми рухаємо мишу
-  if (isDrawing && currentTool === "brush") {
+  if (!isDrawing) return;
+  if (currentTool === "brush") {
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
-  }
-};
-canvas.onmouseup = (e) => {
-  // Лінія малюється один раз тільки в момент відпускання кнопки
-  if (isDrawing && currentTool === "line") {
+  } else if (currentTool === "line") {
+    // ЕФЕКТ ГУМОВОЇ НИТКИ:
+    // 1. Повертаємо полотно до стану "до початку малювання лінії"
+    ctx.putImageData(snapshot, 0, 0);
+    // 2. Малюємо лінію заново в нову позицію миші
+    ctx.beginPath();
     ctx.moveTo(startX, startY);
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
   }
+};
+
+canvas.onmouseup = (e) => {
   isDrawing = false;
 };
 
