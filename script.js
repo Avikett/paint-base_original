@@ -89,8 +89,7 @@ canvas.onmousemove = (e) => {
   }
 };
 
-//azzov99
-canvas.onmouseup = () => {
+canvas.onmouseup = (e) => {
   isDrawing = false;
 };
 
