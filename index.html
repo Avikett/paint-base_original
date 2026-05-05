@@ -11,10 +11,16 @@
     <!-- Aviket -->
     <div class="controls">
       <button id="brushBtn" class="tool-button active" title="Пензель">
-        🖌️
+        &#9998;
       </button>
-      <button id="lineBtn" class="tool-button" title="Лінія">📏</button>
-
+      <button id="lineBtn" class="tool-button" title="Лінія">&#9585;</button>
+      <button id="rectBtn" class="tool-button" title="Прямокутник">
+        &#9645;
+      </button>
+      <button id="circleBtn" class="tool-button" title="Коло">&#9711;</button>
+      <button id="fillBtn" class="tool-button" title="Заливка">
+        &#129683;
+      </button>
       <input
         type="color"
         id="colorPicker"
@@ -22,10 +28,9 @@
         class="tool-button"
         title="Оберіть колір"
       />
-
       <input type="range" id="lineWidth" min="1" max="10" value="5" />
       <span id="sizeValue">5px</span>
-      <button id="clearBtn" title="Очистити полотно" class="tool-button">
+      <button id="clearBtn" class="tool-button" title="Очистити полотно">
         &#128465;
       </button>
     </div>
