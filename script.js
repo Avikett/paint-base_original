@@ -14,6 +14,11 @@ const tools = [brushBtn, lineBtn, rectBtn, circleBtn];
 let startX, startY;
 let snapshot; // Тут буде зберігатись "фотографія" полотна
 const fillBtn = document.getElementById("fillBtn"); // Знайти нову кнопку
+const eraserBtn = document.getElementById("eraserBtn");
+
+// Додаємо кнопку до масиву tools, щоб працювало автоматичне підсвічування активного інструмента
+tools.push(eraserBtn);
+
 tools.push(fillBtn); // Додати її в масив для авто-перемикання класів
 
 // Універсальна функція перемикання (замість копіпасту для кожної кнопки)
@@ -59,7 +64,12 @@ canvas.onmousedown = (e) => {
 canvas.onmousemove = (e) => {
   if (!isDrawing) return;
 
-  if (currentTool === "brush") {
+  if (currentTool === "brush" || currentTool === "eraser") {
+    // 1. Встановлюємо колір: білий для ластика або вибраний для пензля
+    ctx.strokeStyle = currentTool === "eraser" ? "#ffffff" : colorPicker.value;
+    // 2. Встановлюємо товщину: беремо актуальне значення з повзунка
+    ctx.lineWidth = document.getElementById("lineWidth").value;
+    // 3. Малюємо лінію
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
   } else {
@@ -86,7 +96,10 @@ canvas.onmousemove = (e) => {
 };
 
 canvas.onmouseup = () => {
-  isDrawing = false;
+  if (isDrawing) {
+    isDrawing = false;
+    saveState(); // Зберігаємо результат малювання лінії, фігури чи заливки
+  }
 };
 
 lineWidth.oninput = () => {
@@ -153,3 +166,53 @@ function floodFill(startX, startY, fillColor) {
   }
   ctx.putImageData(imageData, 0, 0);
 }
+eraserBtn.onclick = () => {
+  setActiveTool("eraser", eraserBtn);
+};
+
+let undoStack = []; // Сюди складаємо кроки назад
+let redoStack = []; // Сюди — скасовані кроки, які можна повернути
+const maxHistory = 10; // Обмеження, щоб не перевантажити пам'ять браузера
+
+const undoBtn = document.getElementById("undoBtn");
+const redoBtn = document.getElementById("redoBtn");
+
+// Функція для створення знімка екрана
+function saveState() {
+  // Зберігаємо поточний стан полотна
+  const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  undoStack.push(snapshot);
+
+  // Якщо історія занадто велика — видаляємо найстаріший крок
+  if (undoStack.length > maxHistory) {
+    undoStack.shift();
+  }
+
+  // Кожна нова дія користувача очищує Redo-шлях (майбутнє переписується)
+  redoStack = [];
+}
+
+// Кнопка Скасувати
+undoBtn.onclick = () => {
+  if (undoStack.length > 1) {
+    // Залишаємо хоча б один (початковий) стан
+    const currentState = undoStack.pop();
+    redoStack.push(currentState); // Перекидаємо поточний у "майбутнє"
+
+    const previousState = undoStack[undoStack.length - 1];
+    ctx.putImageData(previousState, 0, 0);
+  }
+};
+
+// Кнопка Повторити
+redoBtn.onclick = () => {
+  if (redoStack.length > 0) {
+    const nextState = redoStack.pop();
+    undoStack.push(nextState); // Повертаємо стан в "історію"
+    ctx.putImageData(nextState, 0, 0);
+  }
+};
+
+window.onload = () => {
+  saveState(); // Тепер перший крок в історії — пусте полотно
+};
