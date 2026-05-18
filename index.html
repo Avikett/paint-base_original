@@ -9,16 +9,16 @@
     <h1>UnityPaint v0.1</h1>
     <p>Етап: створення прототипу</p>
     <!-- Aviket -->
+    <!-- Емодзі кнопок -->
     <div class="controls">
       <button id="brushBtn" class="tool-button active" title="Пензель">
         &#9998;
       </button>
-      <button id="lineBtn" class="tool-button" title="Лінія">&#9585;</button>
-      <button id="rectBtn" class="tool-button" title="Прямокутник">
-        &#9645;
-      </button>
-      <button id="circleBtn" class="tool-button" title="Коло">&#9711;</button>
-
+      <button id="lineBtn" class="tool-button" title="Лінія">📏</button>
+      <button id="rectBtn" class="tool-button" title="Прямокутник">🔲</button>
+      <button id="circleBtn" class="tool-button" title="Коло">🟠</button>
+      <button id="fillBtn" class="tool-button" title="Заливка">🪣</button>
+      <button id="eraserBtn" class="tool-button" title="Ластик">🧽</button>
       <input
         type="color"
         id="colorPicker"
@@ -29,12 +29,18 @@
 
       <input type="range" id="lineWidth" min="1" max="10" value="5" />
       <span id="sizeValue">5px</span>
-      <button id="clearBtn" title="Очистити полотно" class="tool-button">
-        &#128465;
+      <button id="clearBtn" class="tool-button" title="Очистити полотно">
+        🗑️
+      </button>
+      <button id="undoBtn" class="tool-button" title="Скасувати (Ctrl+Z)">
+        &#8630;
+      </button>
+      <button id="redoBtn" class="tool-button" title="Повторити (Ctrl+Y)">
+        &#8631;
       </button>
     </div>
 
-    <canvas id="board" width="500" height="400"></canvas>
+    <canvas id="board" width="700" height="500"></canvas>
     <script src="script.js"></script>
   </body>
 </html>
