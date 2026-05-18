@@ -1,25 +1,25 @@
-/* Оформлення робочого місця */
+/* ==========================================================================
+   Оформлення робочого місця
+   ========================================================================== */
 body {
   background: #2c3e50;
   color: white;
   text-align: center;
   font-family: sans-serif;
 }
+
 canvas {
   background: white;
   border: 5px solid #bdc3c7;
-  cursor: crosshair;
-}
-.controls {
-  margin-bottom: 10px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
+  /* ВИПРАВЛЕНО: Прибрали жорсткий crosshair, щоб класи нижче могли вільно змінювати курсор */
+  cursor: default;
 }
 
+/* Об'єднані дублюючі правила для controls */
 .controls {
   background: #34495e;
   padding: 10px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,8 @@ button {
 button:hover {
   background-color: #e0e0e0;
 }
-/* Загальний стиль для всіх кнопок панелі — автор: ім'я /нік */
+
+/* Загальний стиль для всіх кнопок панелі — автор: ім'я / нік */
 .tool-button,
 select.tool-button {
   width: 40px;
@@ -72,16 +73,42 @@ select.tool-button {
   border: none;
   border-radius: 2px;
 }
+
 /* Стиль для активного інструмента — автор: ім'я */
 .tool-button.active {
   background-color: #bdc3c7; /* Темніший колір */
   border-color: #2c3e50; /* Акцентна рамка */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Ефект натиснутої кнопки */
 }
+
 /* Робимо стрілки Undo/Redo товстішими та помітнішими */
 #undoBtn,
 #redoBtn {
   font-weight: 900; /* Максимальна товщина шрифту */
   font-size: 1.3em; /* Збільшуємо розмір символу на 30% відносно кнопки */
   line-height: 1; /* Вирівнюємо по вертикалі */
+}
+
+/* ==========================================================================
+     КРОК 23: Спеціальні класи для зміни вигляду миші на полотні 
+     ========================================================================== */
+
+/* Пензель — хрестик для точності */
+.cursor-brush {
+  cursor: crosshair;
+}
+
+/* Ластик — "приціл" або спеціальна іконка вибору (cell) */
+.cursor-eraser {
+  cursor: cell;
+}
+
+/* Заливка — курсор копіювання (часто виглядає як плюсик або піпетка) */
+.cursor-fill {
+  cursor: copy;
+}
+
+/* Геометричні фігури — точне перехрестя (precision) */
+.cursor-shapes {
+  cursor: precision;
 }

@@ -242,3 +242,40 @@ function floodFill(startX, startY, fillColor) {
 window.onload = () => {
   saveState(); // Тепер перший крок в історії — пусте полотно
 };
+// Оновлена функція з підтримкою курсорів
+function setActiveTool(toolName, activeBtn) {
+  currentTool = toolName;
+
+  // 1. UI: Оновлюємо підсвічування кнопок
+  tools.forEach((btn) => btn.classList.remove("active"));
+  activeBtn.classList.add("active");
+
+  // 2. UX: Змінюємо вигляд курсору на полотні
+  // Спочатку видаляємо всі можливі класи курсорів, щоб вони не накладалися один на одного
+  canvas.classList.remove(
+    "cursor-brush",
+    "cursor-eraser",
+    "cursor-fill",
+    "cursor-shapes"
+  );
+
+  // Тепер додаємо потрібний клас залежно від вибраного інструменту
+  if (toolName === "brush") {
+    canvas.classList.add("cursor-brush");
+  } else if (toolName === "eraser") {
+    canvas.classList.add("cursor-eraser");
+  } else if (toolName === "fill") {
+    canvas.classList.add("cursor-fill");
+  } else {
+    // Для ліній, прямокутників та кіл використовуємо загальний клас фігур
+    canvas.classList.add("cursor-shapes");
+  }
+}
+
+// Прив'язка інструментів до логіки перемикання та курсорів (вставляти в кінець файлу)
+brushBtn.onclick = () => setActiveTool("brush", brushBtn);
+lineBtn.onclick = () => setActiveTool("line", lineBtn);
+rectBtn.onclick = () => setActiveTool("rect", rectBtn);
+circleBtn.onclick = () => setActiveTool("circle", circleBtn);
+fillBtn.onclick = () => setActiveTool("fill", fillBtn);
+eraserBtn.onclick = () => setActiveTool("eraser", eraserBtn);
