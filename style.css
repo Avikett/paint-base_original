@@ -16,7 +16,6 @@ canvas {
   gap: 15px;
   justify-content: center;
 }
-/*TEORET1K*/
 
 .controls {
   background: #34495e;
@@ -58,7 +57,7 @@ select.tool-button {
   line-height: 1; /* Центрування символу по вертикалі */
 }
 
-/* Специфічні налаштування для вибору кольору, автор: ім'я учасника */
+/* Специфічні налаштування для вибору кольору — автор: Aviket */
 #colorPicker {
   appearance: none;
   background: none;
@@ -73,9 +72,16 @@ select.tool-button {
   border: none;
   border-radius: 2px;
 }
-/* Стиль для активного інструмента — автор: ім'я / нік*/
+/* Стиль для активного інструмента — автор: ім'я */
 .tool-button.active {
   background-color: #bdc3c7; /* Темніший колір */
   border-color: #2c3e50; /* Акцентна рамка */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Ефект натиснутої кнопки */
+}
+/* Робимо стрілки Undo/Redo товстішими та помітнішими */
+#undoBtn,
+#redoBtn {
+  font-weight: 900; /* Максимальна товщина шрифту */
+  font-size: 1.3em; /* Збільшуємо розмір символу на 30% відносно кнопки */
+  line-height: 1; /* Вирівнюємо по вертикалі */
 }
