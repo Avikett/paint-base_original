@@ -86,11 +86,11 @@ canvas.onmousemove = (e) => {
       // Прямокутник: (x, y, ширина, висота)
       ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
     } else if (currentTool === "circle") {
-      // Малюємо коло, де центр — початкова точка, а радіус — відстань до миші
-      let radius = Math.sqrt(
-        Math.pow(e.offsetX - startX, 2) + Math.pow(e.offsetY - startY, 2)
-      );
-      ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+      // Точкова зміна “Еліпс”: замість кола малюємо еліпс
+      ctx.beginPath();
+      let rx = Math.abs(e.offsetX - startX); // Півось x
+      let ry = Math.abs(e.offsetY - startY); // Півось y
+      ctx.ellipse(startX, startY, rx, ry, 0, 0, 2 * Math.PI);
     }
 
     ctx.stroke();
