@@ -92,7 +92,6 @@ canvas.onmousemove = (e) => {
       let ry = Math.abs(e.offsetY - startY); // Півось y
       ctx.ellipse(startX, startY, rx, ry, 0, 0, 2 * Math.PI);
     }
-
     ctx.stroke();
   }
 };
