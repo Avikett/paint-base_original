@@ -1,4 +1,6 @@
 const canvas = document.querySelector("#board");
+//azzov99
+let snapshot; // Тут буде зберігатись "фотографія" полотна
 const ctx = canvas.getContext("2d");
 let isDrawing = false;
 const colorPicker = document.getElementById("colorPicker");
@@ -6,13 +8,13 @@ const lineWidth = document.getElementById("lineWidth");
 const sizeValue = document.getElementById("sizeValue");
 // Нові змінні для Кроку 15
 let currentTool = "brush"; // Поточний інструмент
+//azzov99
 const brushBtn = document.getElementById("brushBtn");
 const lineBtn = document.getElementById("lineBtn");
 const rectBtn = document.getElementById("rectBtn");
 const circleBtn = document.getElementById("circleBtn");
 const tools = [brushBtn, lineBtn, rectBtn, circleBtn];
 let startX, startY;
-let snapshot; // Тут буде зберігатись "фотографія" полотна
 const fillBtn = document.getElementById("fillBtn"); // Знайти нову кнопку
 const eraserBtn = document.getElementById("eraserBtn");
 
@@ -84,11 +86,11 @@ canvas.onmousemove = (e) => {
       // Прямокутник: (x, y, ширина, висота)
       ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
     } else if (currentTool === "circle") {
-      // Малюємо коло, де центр — початкова точка, а радіус — відстань до миші
-      let radius = Math.sqrt(
-        Math.pow(e.offsetX - startX, 2) + Math.pow(e.offsetY - startY, 2)
-      );
-      ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+      // Точкова зміна “Еліпс”: замість кола малюємо еліпс
+      ctx.beginPath();
+      let rx = Math.abs(e.offsetX - startX); // Півось x
+      let ry = Math.abs(e.offsetY - startY); // Півось y
+      ctx.ellipse(startX, startY, rx, ry, 0, 0, 2 * Math.PI);
     }
 
     ctx.stroke();
@@ -164,12 +166,17 @@ function floodFill(startX, startY, fillColor) {
       stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
     }
   }
+  // Рядок після ctx.putImageData
   ctx.putImageData(imageData, 0, 0);
+  // Точкова зміна 4:
+  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
 }
+
 eraserBtn.onclick = () => {
   setActiveTool("eraser", eraserBtn);
 };
 
+// Точкова зміна 1: замість стеків один масив з вказівником
 let history = []; // Сюди складаємо знімки полотна
 let historyIndex = -1; // Вказівник на поточний стан в історії
 
@@ -178,6 +185,8 @@ const maxHistory = 10; // Обмеження, щоб не перевантажи
 const undoBtn = document.getElementById("undoBtn");
 const redoBtn = document.getElementById("redoBtn");
 
+// Функція для створення знімка екрана
+// Точкова зміна 2: нова логіка для збереження стану з вказівником
 function saveState() {
   // 1. Кожна нова дія користувача ГАРАНТОВАНО видаляє "майбутнє",
   // якщо ми зробили Undo і вказівник (historyIndex) знаходиться посередині історії.
@@ -195,6 +204,7 @@ function saveState() {
   }
 }
 
+// Кнопка Скасувати
 // Точкова зміна 3: нова логіка для кнопок histories
 // Кнопка Скасувати (Undo)
 undoBtn.onclick = () => {
