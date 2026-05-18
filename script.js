@@ -138,7 +138,7 @@ function floodFill(startX, startY, fillColor) {
   const g = parseInt(fillColor.slice(3, 5), 16);
   const b = parseInt(fillColor.slice(5, 7), 16);
 
-  if (startR === r && startG === g && startB === b) return;
+  if (startR === r && startG === g && startB === b && startA === 255) return;
 
   const stack = [[startX, startY]];
 
@@ -170,48 +170,64 @@ eraserBtn.onclick = () => {
   setActiveTool("eraser", eraserBtn);
 };
 
-let undoStack = []; // Сюди складаємо кроки назад
-let redoStack = []; // Сюди — скасовані кроки, які можна повернути
+let history = []; // Сюди складаємо знімки полотна
+let historyIndex = -1; // Вказівник на поточний стан в історії
+
 const maxHistory = 10; // Обмеження, щоб не перевантажити пам'ять браузера
 
 const undoBtn = document.getElementById("undoBtn");
 const redoBtn = document.getElementById("redoBtn");
 
-// Функція для створення знімка екрана
 function saveState() {
-  // Зберігаємо поточний стан полотна
-  const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  undoStack.push(snapshot);
-
-  // Якщо історія занадто велика — видаляємо найстаріший крок
-  if (undoStack.length > maxHistory) {
-    undoStack.shift();
+  // 1. Кожна нова дія користувача ГАРАНТОВАНО видаляє "майбутнє",
+  // якщо ми зробили Undo і вказівник (historyIndex) знаходиться посередині історії.
+  if (historyIndex < history.length - 1) {
+    history = history.slice(0, historyIndex + 1);
   }
-
-  // Кожна нова дія користувача очищує Redo-шлях (майбутнє переписується)
-  redoStack = [];
+  // 2. Зберігаємо поточний стан полотна
+  const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  history.push(snapshot);
+  historyIndex++;
+  // 3. Обмеження, щоб не перевантажити пам'ять браузера
+  if (history.length > maxHistory) {
+    history.shift(); // Видаляємо найстаріший крок
+    historyIndex--; // Зсуваємо вказівник, бо нульовий елемент видалено
+  }
 }
 
-// Кнопка Скасувати
+// Точкова зміна 3: нова логіка для кнопок histories
+// Кнопка Скасувати (Undo)
 undoBtn.onclick = () => {
-  if (undoStack.length > 1) {
-    // Залишаємо хоча б один (початковий) стан
-    const currentState = undoStack.pop();
-    redoStack.push(currentState); // Перекидаємо поточний у "майбутнє"
-
-    const previousState = undoStack[undoStack.length - 1];
-    ctx.putImageData(previousState, 0, 0);
+  if (historyIndex > 0) {
+    // Переконуємося, що є куди повертатися
+    historyIndex--; // Рухаємо вказівник НАЗАД
+    const previousState = history[historyIndex];
+    ctx.putImageData(previousState, 0, 0); // Перемальовуємо
   }
 };
-
-// Кнопка Повторити
+// Кнопка Повторити (Redo)
 redoBtn.onclick = () => {
-  if (redoStack.length > 0) {
-    const nextState = redoStack.pop();
-    undoStack.push(nextState); // Повертаємо стан в "історію"
-    ctx.putImageData(nextState, 0, 0);
+  if (historyIndex < history.length - 1) {
+    // Переконуємося, що є майбутнє
+    historyIndex++; // Рухаємо вказівник ВПЕРЕД
+    const nextState = history[historyIndex];
+    ctx.putImageData(nextState, 0, 0); // Перемальовуємо
   }
 };
+function floodFill(startX, startY, fillColor) {
+  // ...увесь існуючий код функції floodFill...
+  // Рядок після ctx.putImageData
+  ctx.putImageData(imageData, 0, 0);
+  // Точкова зміна 4:
+  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
+}
+function floodFill(startX, startY, fillColor) {
+  // ...увесь існуючий код функції floodFill...
+  // Рядок після ctx.putImageData
+  ctx.putImageData(imageData, 0, 0);
+  // Точкова зміна 4:
+  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
+}
 
 window.onload = () => {
   saveState(); // Тепер перший крок в історії — пусте полотно
