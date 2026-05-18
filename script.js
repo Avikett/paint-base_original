@@ -141,6 +141,7 @@ function floodFill(startX, startY, fillColor) {
   const b = parseInt(fillColor.slice(5, 7), 16);
 
   if (startR === r && startG === g && startB === b && startA === 255) return;
+
   const stack = [[startX, startY]];
 
   while (stack.length > 0) {
@@ -223,6 +224,20 @@ redoBtn.onclick = () => {
     ctx.putImageData(nextState, 0, 0); // Перемальовуємо
   }
 };
+function floodFill(startX, startY, fillColor) {
+  // ...увесь існуючий код функції floodFill...
+  // Рядок після ctx.putImageData
+  ctx.putImageData(imageData, 0, 0);
+  // Точкова зміна 4:
+  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
+}
+function floodFill(startX, startY, fillColor) {
+  // ...увесь існуючий код функції floodFill...
+  // Рядок після ctx.putImageData
+  ctx.putImageData(imageData, 0, 0);
+  // Точкова зміна 4:
+  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
+}
 
 window.onload = () => {
   saveState(); // Тепер перший крок в історії — пусте полотно
