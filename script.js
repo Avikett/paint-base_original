@@ -92,7 +92,6 @@ canvas.onmousemove = (e) => {
       let ry = Math.abs(e.offsetY - startY); // Півось y
       ctx.ellipse(startX, startY, rx, ry, 0, 0, 2 * Math.PI);
     }
-
     ctx.stroke();
   }
 };
@@ -224,20 +223,6 @@ redoBtn.onclick = () => {
     ctx.putImageData(nextState, 0, 0); // Перемальовуємо
   }
 };
-function floodFill(startX, startY, fillColor) {
-  // ...увесь існуючий код функції floodFill...
-  // Рядок після ctx.putImageData
-  ctx.putImageData(imageData, 0, 0);
-  // Точкова зміна 4:
-  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
-}
-function floodFill(startX, startY, fillColor) {
-  // ...увесь існуючий код функції floodFill...
-  // Рядок після ctx.putImageData
-  ctx.putImageData(imageData, 0, 0);
-  // Точкова зміна 4:
-  saveState(); // ГАРАНТОВАНО зберігаємо результат заливки в історії
-}
 
 window.onload = () => {
   saveState(); // Тепер перший крок в історії — пусте полотно
