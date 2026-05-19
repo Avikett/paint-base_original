@@ -1,30 +1,85 @@
-/* Оформлення робочого місця */
+/* ==========================================================================
+   Оформлення робочого місця
+   ========================================================================== */
 body {
   background: #2c3e50;
   color: white;
-  text-align: center;
   font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Щоб інтерфейс не прокручувався */
 }
+/* Верхня панель за вайрфреймом Варіанту А */
+.top-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* Кнопки ліворуч, назва по центру, праворуч пусто */
+  align-items: center;
+  background: #34495e;
+  padding: 10px 20px;
+  border-bottom: 3px solid #2c3e50;
+}
+
+.system-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.app-info {
+  text-align: center;
+}
+
+.app-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  display: block;
+}
+
+.app-stage {
+  font-size: 0.8rem;
+  color: #bdc3c7;
+}
+
+/* Контейнер-розподільник під верхньою панеллю */
+.main-container {
+  display: flex;
+  flex-grow: 1; /* Займає весь залишок висоти екрана */
+  height: calc(100vh - 63px);
+}
+/* Ліва панель — вишиковує інструменти в акуратний стовпчик */
+.left-toolbar {
+  background: #34495e;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  border-right: 3px solid #2c3e50;
+  min-width: 60px;
+}
+
+#sizeValue {
+  font-size: 12px;
+  color: #bdc3c7;
+}
+
+/* Центральна зона, де лежить полотно */
+.canvas-workspace {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #2c3e50;
+  padding: 20px;
+}
+
 canvas {
   background: white;
   border: 5px solid #bdc3c7;
   cursor: crosshair;
-}
-.controls {
-  margin-bottom: 10px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-/*TEORET1K*/
-
-.controls {
-  background: #34495e;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4); /* Дорослий ефект тіні */
 }
 
 button {
@@ -39,7 +94,8 @@ button {
 button:hover {
   background-color: #e0e0e0;
 }
-/* Загальний стиль для всіх кнопок панелі — автор: ім'я /нік */
+
+/* Загальний стиль для всіх кнопок панелі — автор: ім'я / нік */
 .tool-button,
 select.tool-button {
   width: 40px;
@@ -58,7 +114,7 @@ select.tool-button {
   line-height: 1; /* Центрування символу по вертикалі */
 }
 
-/* Специфічні налаштування для вибору кольору, автор: ім'я учасника */
+/* Специфічні налаштування для вибору кольору — автор: Aviket */
 #colorPicker {
   appearance: none;
   background: none;
@@ -73,9 +129,42 @@ select.tool-button {
   border: none;
   border-radius: 2px;
 }
-/* Стиль для активного інструмента — автор: ім'я / нік*/
+
+/* Стиль для активного інструмента — автор: ім'я */
 .tool-button.active {
   background-color: #bdc3c7; /* Темніший колір */
   border-color: #2c3e50; /* Акцентна рамка */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Ефект натиснутої кнопки */
+}
+
+/* Робимо стрілки Undo/Redo товстішими та помітнішими */
+#undoBtn,
+#redoBtn {
+  font-weight: 900; /* Максимальна товщина шрифту */
+  font-size: 1.3em; /* Збільшуємо розмір символу на 30% відносно кнопки */
+  line-height: 1; /* Вирівнюємо по вертикалі */
+}
+
+/* ==========================================================================
+     КРОК 23: Спеціальні класи для зміни вигляду миші на полотні 
+     ========================================================================== */
+
+/* Пензель — хрестик для точності */
+.cursor-brush {
+  cursor: crosshair;
+}
+
+/* Ластик — "приціл" або спеціальна іконка вибору (cell) */
+.cursor-eraser {
+  cursor: cell;
+}
+
+/* Заливка — курсор копіювання (часто виглядає як плюсик або піпетка) */
+.cursor-fill {
+  cursor: copy;
+}
+
+/* Геометричні фігури — точне перехрестя (precision) */
+.cursor-shapes {
+  cursor: precision;
 }
