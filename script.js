@@ -268,3 +268,15 @@ rectBtn.onclick = () => setActiveTool("rect", rectBtn);
 circleBtn.onclick = () => setActiveTool("circle", circleBtn);
 fillBtn.onclick = () => setActiveTool("fill", fillBtn);
 eraserBtn.onclick = () => setActiveTool("eraser", eraserBtn);
+
+// Крок 28: Логіка кнопки сітки
+const gridBtn = document.getElementById("gridBtn");
+
+gridBtn.onclick = () => {
+  // toggle автоматично додає клас, якщо його немає, і видаляє, якщо він є!
+  canvas.classList.toggle("has-grid");
+  
+  // Додамо візуальний ефект: якщо сітка увімкнена, кнопка стає активною
+  gridBtn.classList.toggle("active");
+};
+
