@@ -103,20 +103,24 @@ canvas.onmouseup = () => {
   }
 };
 
-lineWidth.oninput = () => {
+lineWidth.onchange = () => {
   sizeValue.textContent = lineWidth.value + "px";
 };
+
 // 1. Знаходимо кнопку в HTML
 const clearBtn = document.getElementById("clearBtn");
 
-// 2. Описуємо, що станеться при кліку
 clearBtn.onclick = () => {
-  // clearRect видаляє все у вказаному прямокутнику (від 0,0 до краю полотна)
+  // Видаляємо малюнок
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Додаткова перестраховка: скидаємо шлях, щоб наступна лінія не почалася зі старого місця
   ctx.beginPath();
+  // Повертаємо панель інструментів до початкового стану.
+  // Тепер "Корзина" сама вмикає "Пензель" та змінює курсор!
+  setActiveTool("brush", brushBtn);
+  // Фіксуємо порожнє полотно в історії (Undo/Redo)
+  saveState();
 };
+
 // --- Крок 13: Додаємо рамку та підпис ---
 colorPicker.oninput = () => {
   // автор: Aviket
