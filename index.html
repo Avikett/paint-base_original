@@ -17,6 +17,26 @@
         <button id="clearBtn" class="tool-button" title="Очистити полотно">
           🗑️
         </button>
+        <button
+          id="exportBtn"
+          class="tool-button"
+          title="Завантажити малюнок (PNG)"
+        >
+          💾
+        </button>
+        <button
+          id="importBtn"
+          class="tool-button"
+          title="Відкрити малюнок з файлу"
+        >
+          📂
+        </button>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          style="display: none"
+        />
       </div>
       <div class="app-info">
         <span class="app-title">UnityPaint v0.2</span>
@@ -37,6 +57,13 @@
         <button id="lineBtn" class="tool-button" title="Лінія">📏</button>
         <button id="rectBtn" class="tool-button" title="Прямокутник">🔲</button>
         <button id="circleBtn" class="tool-button" title="Коло">🟠</button>
+        <button
+          id="polygonBtn"
+          class="tool-button"
+          title="Довільний багатокутник (Ламана)"
+        >
+          ⬡
+        </button>
         <button id="fillBtn" class="tool-button" title="Заливка">🪣</button>
         <button id="eraserBtn" class="tool-button" title="Ластик">🧽</button>
         <input

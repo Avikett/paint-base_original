@@ -27,10 +27,34 @@ body {
   justify-content: flex-end;
 }
 /* Клас сітки, який ми будемо "навішувати" на canvas */
-canvas.has-grid {
-  background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
-  background-size: 20px 20px; /* Розмір клітинки сітки */
+/* Позиціонування для контейнера, де лежить полотно */
+.canvas-workspace {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #2c3e50;
+  padding: 20px;
+  position: relative; /* <--- ДОДАТИ ЦЕЙ РЯДОК */
+}
+
+/* Сітка, яка лягає ПОВЕРХ білої фарби полотна */
+.canvas-workspace.has-grid::after {
+  content: "";
+  position: absolute;
+  width: 700px; /* Строго за розміром вашого canvas */
+  height: 500px; /* Строго за розміром вашого canvas */
+  border: 5px solid transparent; /* Враховуємо рамку канваса для точного збігу */
+  pointer-events: none; /* КРИТИЧНО: щоб миша клікала КРІЗЬ сітку на саме полотно! */
+
+  /* Налаштування сітки трохи напівпрозорою */
+  background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 .system-actions {
@@ -178,4 +202,65 @@ select.tool-button {
 /* Геометричні фігури — точне перехрестя (precision) */
 .cursor-shapes {
   cursor: precision;
+}
+
+/* Крок 33: Кросплатформний тач-інтерфейс та адаптація */
+/* 1. Гігієна сенсорного малювання для всіх тач-екранів */
+canvas {
+  touch-action: none; /* Блокує скрол та системні жести браузера під час малювання */
+}
+/* 2. Адаптивна перебудова інтерфейсу для вузьких/мобільних екранів */
+@media screen and (max-width: 800px) {
+  body {
+    overflow: auto; /* Дозволяємо прокрутку самого інтерфейсу, якщо екран крихітний */
+  }
+  /* Перебудова верхньої панелі */
+  .top-bar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .system-actions {
+    justify-content: center;
+  }
+  .top-right-placeholder {
+    justify-content: center;
+  }
+  /* Головний контейнер розгортається зверху вниз */
+  .main-container {
+    flex-direction: column;
+    height: auto;
+  }
+  /* Ліва панель стає нижньою мобільною панеллю */
+  .left-toolbar {
+    flex-direction: row; /* Інструменти вишикуються в ряд */
+    flex-wrap: wrap; /* Якщо кнопок багато — вони перенесуться на новий рядок */
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    gap: 10px;
+    border-right: none;
+    border-top: 3px solid #2c3e50;
+  }
+  /* Робоча зона підлаштовується під мобільні відступи */
+  .canvas-workspace {
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  /* Гумове полотно: стискається під ширину екрана, зберігаючи свої пропорції */
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 700px; /* Не дозволяє розтягуватися більше за оригінал */
+  }
+  /* Спеціальний адаптив підкладки для сітки (щоб вона стискалася синхронно з полотном) */
+  .canvas-workspace.has-grid::after {
+    width: calc(100% - 20px) !important;
+    max-width: 700px;
+    height: 0;
+    padding-bottom: 71.42%; /* Пропорція 500/700 для збереження співвідношення сторін сітки */
+  }
 }

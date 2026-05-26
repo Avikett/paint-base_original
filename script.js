@@ -13,10 +13,15 @@ const brushBtn = document.getElementById("brushBtn");
 const lineBtn = document.getElementById("lineBtn");
 const rectBtn = document.getElementById("rectBtn");
 const circleBtn = document.getElementById("circleBtn");
-const tools = [brushBtn, lineBtn, rectBtn, circleBtn];
+const polygonBtn = document.getElementById("polygonBtn");
+const tools = [brushBtn, lineBtn, rectBtn, circleBtn, polygonBtn];
+let polygonPoints = []; // Масив координат вершин ламаної
 let startX, startY;
 const fillBtn = document.getElementById("fillBtn"); // Знайти нову кнопку
 const eraserBtn = document.getElementById("eraserBtn");
+const exportBtn = document.getElementById("exportBtn");
+const importBtn = document.getElementById("importBtn");
+const fileInput = document.getElementById("fileInput");
 
 // Додаємо кнопку до масиву tools, щоб працювало автоматичне підсвічування активного інструмента
 tools.push(eraserBtn);
@@ -26,6 +31,9 @@ tools.push(fillBtn); // Додати її в масив для авто-пере
 // Універсальна функція перемикання (замість копіпасту для кожної кнопки)
 function setActiveTool(toolName, activeBtn) {
   currentTool = toolName;
+  // Якщо перемкнулися з багатокутника, очищаємо недомальовані точки
+  polygonPoints = [];
+
   tools.forEach((btn) => btn.classList.remove("active"));
   activeBtn.classList.add("active");
 }
@@ -34,6 +42,7 @@ brushBtn.onclick = () => setActiveTool("brush", brushBtn);
 lineBtn.onclick = () => setActiveTool("line", lineBtn);
 rectBtn.onclick = () => setActiveTool("rect", rectBtn);
 circleBtn.onclick = () => setActiveTool("circle", circleBtn);
+polygonBtn.onclick = () => setActiveTool("polygon", polygonBtn);
 fillBtn.onclick = () => setActiveTool("fill", fillBtn);
 
 // Технічні параметри пензля
@@ -43,6 +52,48 @@ ctx.strokeStyle = "#e74c3c"; // Червоний колір за замовчу�
 
 // Логіка малювання
 canvas.onmousedown = (e) => {
+  const currentX = e.offsetX;
+  const currentY = e.offsetY;
+  // Окремий алгоритм для довільного багатокутника
+  if (currentTool === "polygon") {
+    // Перевірка: якщо клікнули близько до ПЕРШОЇ точки (в радіусі 10 пікселів) — замикаємо контур
+    if (
+      polygonPoints.length > 2 &&
+      Math.abs(currentX - polygonPoints[0].x) < 10 &&
+      Math.abs(currentY - polygonPoints[0].y) < 10
+    ) {
+      ctx.putImageData(snapshot, 0, 0); // Повертаємо чистий знімок (без гумової нитки)
+      ctx.beginPath();
+      ctx.moveTo(
+        polygonPoints[polygonPoints.length - 1].x,
+        polygonPoints[polygonPoints.length - 1].y
+      );
+      ctx.lineTo(polygonPoints[0].x, polygonPoints[0].y); // Лінія до першої точки
+      ctx.stroke();
+      polygonPoints = []; // Очищаємо масив для нової фігури
+      saveState(); // Зберігаємо готову фігуру в історію
+      return;
+    }
+    // Якщо це найперша точка фігури — робимо знімок екрана
+    if (polygonPoints.length === 0) {
+      snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+    // Додаємо поточну точку в масив
+    polygonPoints.push({ x: currentX, y: currentY });
+    // Одразу малюємо зафіксовані лінії
+    ctx.beginPath();
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = lineWidth.value;
+    ctx.moveTo(polygonPoints[0].x, polygonPoints[0].y);
+    for (let i = 1; i < polygonPoints.length; i++) {
+      ctx.lineTo(polygonPoints[i].x, polygonPoints[i].y);
+    }
+    ctx.stroke();
+    // Оновлюємо snapshot, щоб зафіксувати нову лінію
+    snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    return; // Виходимо, щоб не спрацювала стандартна логіка інших інструментів
+  }
+
   startX = e.offsetX;
   startY = e.offsetY;
   if (currentTool === "fill") {
@@ -64,6 +115,19 @@ canvas.onmousedown = (e) => {
 };
 
 canvas.onmousemove = (e) => {
+  if (currentTool === "polygon") {
+    if (polygonPoints.length === 0) return; // Якщо точок ще немає — нічого не малюємо
+    ctx.putImageData(snapshot, 0, 0); // Очищаємо екран до стану останньої стабільної точки
+    ctx.beginPath();
+    ctx.strokeStyle = colorPicker.value;
+    ctx.lineWidth = lineWidth.value;
+    // Малюємо лінію від останньої клікнутої точки до поточного положення миші
+    const lastPoint = polygonPoints[polygonPoints.length - 1];
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    return;
+  }
   if (!isDrawing) return;
 
   if (currentTool === "brush" || currentTool === "eraser") {
@@ -97,6 +161,7 @@ canvas.onmousemove = (e) => {
 };
 
 canvas.onmouseup = () => {
+  if (currentTool === "polygon") return; // <--- Ламана (не зберігаємо стан, поки контур не замкнено!)
   if (isDrawing) {
     isDrawing = false;
     saveState(); // Зберігаємо результат малювання лінії, фігури чи заливки
@@ -229,6 +294,10 @@ redoBtn.onclick = () => {
 };
 
 window.onload = () => {
+  // Насичуємо полотно білими пікселями з першої секунди
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
   saveState(); // Тепер перший крок в історії — пусте полотно
 };
 // Оновлена функція з підтримкою курсорів
@@ -271,12 +340,95 @@ eraserBtn.onclick = () => setActiveTool("eraser", eraserBtn);
 
 // Крок 28: Логіка кнопки сітки
 const gridBtn = document.getElementById("gridBtn");
+const workspace = document.querySelector(".canvas-workspace"); // 1. Знаходимо робочу зону
 
 gridBtn.onclick = () => {
-  // toggle автоматично додає клас, якщо його немає, і видаляє, якщо він є!
-  canvas.classList.toggle("has-grid");
-  
-  // Додамо візуальний ефект: якщо сітка увімкнена, кнопка стає активною
+  // 2. Вмикання/вимикання сітки на всьому контейнері
+  workspace.classList.toggle("has-grid");
   gridBtn.classList.toggle("active");
 };
 
+// Крок 29: Логіка експорту малюнка у файл
+function downloadImage() {
+  // 1. Отримуємо дані з canvas у вигляді текстового рядка Base64 (формат PNG)
+  const dataURL = canvas.toDataURL("image/png");
+  // 2. Створюємо віртуальне посилання для скачування в пам'яті браузера
+  const link = document.createElement("a");
+  link.href = dataURL;
+  // 3. Формуємо унікальну назву файлу з міткою поточного часу
+  link.download = `unity_paint_${Date.now()}.png`;
+  // 4. Емулюємо клік для автоматичного старту завантаження
+  link.click();
+}
+// Прив'язуємо функцію до кліку по дискеті
+exportBtn.onclick = downloadImage;
+
+// Крок 30: Логіка імпорту малюнка з файлу
+// 1. При кліку на кнопку-папку перенаправляємо клік на прихований input
+importBtn.onclick = () => {
+  fileInput.click();
+};
+// 2. Коли користувач обрав файл у вікні — спрацьовує подія "change"
+fileInput.onchange = (e) => {
+  const file = e.target.files[0]; // Беремо перший обраний файл
+  if (!file) return; // Якщо користувач скасував вибір — виходимо
+  const reader = new FileReader(); // Створюємо інструмент для зчитування файлів
+  // Коли файл успішно зчитано в пам'ять:
+  reader.onload = (event) => {
+    const img = new Image(); // Створюємо віртуальний об'єкт зображення
+    // Коли картинка повністю завантажилася в пам'ять як об'єкт:
+    img.onload = () => {
+      // Очищуємо полотно перед тим, як вставити нове зображення
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Малюємо картинку на полотні, підганяючи її під розмір нашого canvas (700х500)
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Зберігаємо цей стан в історію, щоб працювали Undo/Redo!
+      saveState();
+      // Скидаємо значення інпуту, щоб можна було завантажити ту саму картинку повторно
+      fileInput.value = "";
+    };
+    img.src = event.target.result; // Передаємо зчитані дані у джерело картинки
+  };
+  reader.readAsDataURL(file); // Запускаємо зчитування файлу як Base64-рядок
+};
+// Крок 33: Обробка Touch-подій для сенсорних пристроїв
+// Функція точного перерахунку координат дотику з урахуванням адаптивного стиснення Canvas
+function getTouchPos(touchEvent) {
+  const rect = canvas.getBoundingClientRect();
+  const touch = touchEvent.touches[0]; // Фіксуємо перший палець
+  // Обрахунки коефіцієнта масштабу (якщо canvas стиснутий на мобільному екрані)
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (touch.clientX - rect.left) * scaleX,
+    y: (touch.clientY - rect.top) * scaleY,
+  };
+}
+// 1. Початок дотику пальцем (Аналог onmousedown)
+canvas.addEventListener("touchstart", (e) => {
+  // Залишити інструмент "polygon" тільки для миші через специфіку кліків ламаної
+  if (currentTool === "polygon") return;
+  e.preventDefault(); // Повністю блокуємо зум сторінки під пальцем розробника
+  const touchPos = getTouchPos(e);
+  // Сформувати штучну подію та викликати готовий обробник
+  canvas.onmousedown({
+    offsetX: touchPos.x,
+    offsetY: touchPos.y,
+  });
+});
+// 2. Рух пальця по екрану (Аналог onmousemove)
+canvas.addEventListener("touchmove", (e) => {
+  if (currentTool === "polygon") return;
+  e.preventDefault();
+  const touchPos = getTouchPos(e);
+  canvas.onmousemove({
+    offsetX: touchPos.x,
+    offsetY: touchPos.y,
+  });
+});
+// 3. Фінал малювання — палець відірвано від екрана (Аналог onmouseup)
+canvas.addEventListener("touchend", (e) => {
+  if (currentTool === "polygon") return;
+  // Викликати готовий обробник відпускання миші
+  canvas.onmouseup();
+});
